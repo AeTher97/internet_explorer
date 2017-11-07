@@ -1,0 +1,8 @@
+*.vs
+*.suo
+*.VC
+*.opendb
+*.vcx
+*.filters
+*.xproj
+*.slm
