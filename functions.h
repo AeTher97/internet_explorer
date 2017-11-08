@@ -21,4 +21,7 @@ void ccr(long long int * fuel_gas_energy,long long int * electricity_amount, lon
 
 void goht(long long int * fuel_gas_energy,long long int * electricity_amount, long long int * cooling_water_amount,long long int *hydrogen,long long int *catalyst,long long int goht_feed,long int * goht_products);
 
+long long int kilograms_to_barrels(long long int crude_in_kilograms, double api);
+
+
 #endif //FRESHH_FUNCTIONS_H

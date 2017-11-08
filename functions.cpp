@@ -116,16 +116,31 @@ ccr_products[4]=floor(0.1/100*ccr_feed);
 (*catalyst)+=(670/1000000)*ccr_feed;
 }
 
-void goht(long long int * fuel_gas_energy,long long int * electricity_amount, long long int * cooling_water_amount,long long int *hydrogen,long long int *catalyst,long long int goht_feed,long int * goht_products);
+void goht(long long int * fuel_gas_energy,long long int * electricity_amount, long long int * cooling_water_amount,long long int *hydrogen,long long int *catalyst,long long int goht_feed,long int * goht_products)
 {
-ccr_products[0]=floor(6.26/100*ccr_feed);
-ccr_products[1]=floor(4.06/100*ccr_feed);
-ccr_products[2]=floor(86.30/100*ccr_feed);
-ccr_products[3]=floor(3.28/100*ccr_feed);
-ccr_products[4]=floor(0.1/100*ccr_feed);
+    goht_products[0]=floor(0.56/100*goht_feed);
+    goht_products[1]=floor(0.77/100*goht_feed);
+    goht_products[2]=floor(7.84/100*goht_feed);
+    goht_products[3]=floor(90.33/100*goht_feed);
+    goht_products[4]=floor(1.05/100*goht_feed);
+    goht_products[5]=floor(0.2/100*goht_feed);
 
-(*fuel_gas_energy)+=ceil(4028*1000*ccr_feed);
-(*electricity_amount)+=ceil(127.5/1000000*ccr_feed);
-(*cooling_water_amount)+=ceil(18.8/1000*ccr_feed);
-(*catalyst)+=(670/1000000)*ccr_feed;
+    (*hydrogen)+=(0.75/100*goht_feed);
+    (*fuel_gas_energy)+=ceil(290*1000*goht_feed);
+    (*electricity_amount)+=ceil(17/1000000*goht_feed);
+    (*cooling_water_amount)+=ceil(5.2/1000*goht_feed);
+    (*catalyst)+=(200/1000000)*goht_feed;
+}
+
+long long int kilograms_to_barrels(long long int crude_in_kilograms, double api)
+{
+
+    long long int crude_in_barrels = crude_in_kilograms/1000 * 1/(141.5/(api +131.5)*0.159);
+
+
+
+
+
+
+    return crude_in_barrels;
 }
