@@ -149,12 +149,69 @@ void hds(long long int * fuel_gas_energy,long long int * electricity_amount,long
         hds_products[4] = floor(71.78 / 100 * hds_feed);
         hds_products[5] = floor(2.58 / 100 * hds_feed);
     }
-    (*hydrogen)=(1.00/100*hds_feed);
-    (*fuel_gas_energy)=ceil(280*1000*hds_feed);
-    (*electricity_amount)=ceil(36/1000000*hds_feed);
-    (*cooling_water_amount)=ceil(5.2/1000*hds_feed);
-    (*steam)=ceil(245/1000*hds_feed);
 
+    (*hydrogen) = (1.00 / 100 * hds_feed);
+    (*fuel_gas_energy) = ceil(280 * 1000 * hds_feed);
+    (*electricity_amount) = ceil(36 / 1000000 * hds_feed);
+    (*cooling_water_amount) = ceil(5.2 / 1000 * hds_feed);
+    (*steam) = ceil(245 / 1000 * hds_feed);
+
+
+}
+
+void bbu(long long int * fuel_gas_energy,long long int * electricity_amount,long long int * cooling_water_amount,long long int * steam,long long int bbu_feed,long int * bbu_products)
+{
+
+    bbu_products[0] = floor(98 / 100 * bbu_feed);
+
+
+    (*fuel_gas_energy) = ceil(280 * 1000 * bbu_feed);
+    (*electricity_amount) = ceil(36 / 1000000 * bbu_feed);
+    (*cooling_water_amount) = ceil(5.2 / 1000 * bbu_feed);
+    (*steam) = ceil(245 / 1000 * bbu_feed);
+
+
+}
+
+
+void fcc(long long int * fuel_gas_energy,long long int * electricity_amount,long long int * cooling_water_amount,long long int *catalyst,long long int * steam,long long int fcc_feed,long int * fcc_products,int fcc_mode)
+{
+    if(fcc_mode==0) {
+        fcc_products[0] = floor(4.08 / 100 * fcc_feed);
+        fcc_products[1] = floor(5.85 / 100 * fcc_feed);
+        fcc_products[2] = floor(14.04 / 100 * fcc_feed);
+        fcc_products[3] = floor(49.19 / 100 * fcc_feed);
+        fcc_products[4] = floor(13.72 / 100 * fcc_feed);
+        fcc_products[5] = floor(3.00 / 100 * fcc_feed);
+        fcc_products[6] = floor(4.48 / 100 * fcc_feed);
+    }
+    if(fcc_mode==1)
+    {
+        fcc_products[0] = floor(4.58 / 100 * fcc_feed);
+        fcc_products[1] = floor(9.34 / 100 * fcc_feed);
+        fcc_products[2] = floor(18.54 / 100 * fcc_feed);
+        fcc_products[3] = floor(40.26 / 100 * fcc_feed);
+        fcc_products[4] = floor(13.72 / 100 * fcc_feed);
+        fcc_products[5] = floor(3.00 / 100 * fcc_feed);
+        fcc_products[6] = floor(4.48 / 100 * fcc_feed);
+    }
+
+    if(fcc_mode==0) {
+        (*fuel_gas_energy) = ceil(160 * 1000 * fcc_feed);
+        (*electricity_amount) = ceil(50 / 1000000 * fcc_feed);
+        (*cooling_water_amount) = ceil(25 / 1000 * fcc_feed);
+        (*steam) = ceil(-250 / 1000 * fcc_feed);
+        (*catalyst)=(630/1000000)*fcc_feed;
+
+    }
+    if(fcc_mode==1){
+        (*fuel_gas_energy) = ceil(160 * 1000 * fcc_feed);
+        (*electricity_amount) = ceil(50 / 1000000 * fcc_feed);
+        (*cooling_water_amount) = ceil(25 / 1000 * fcc_feed);
+        (*steam) = ceil(-250 / 1000 * fcc_feed);
+        (*catalyst)=(786/1000000)*fcc_feed;
+
+    }
 
 }
 
@@ -171,3 +228,108 @@ long long int kilograms_to_barrels(long long int crude_in_kilograms, double api)
 
     return crude_in_barrels;
 }
+
+bool isGasolineBlended(double fcc_gasoline_feed, double reformate_feed, double isomerate_feed)
+{
+
+
+    double volume_of_fcc_gasoline = fcc_gasoline_feed / fcc_SPG;
+    double volume_of_reformate_gasoline = reformate_feed / reformatre_SPG;
+    double volume_of_isomerate_gasoline = isomerate_feed / isomerate_SPG;
+
+    double total_volume = volume_of_fcc_gasoline + volume_of_reformate_gasoline + volume_of_isomerate_gasoline;
+
+    double fcc_ratio = volume_of_fcc_gasoline / total_volume;
+    double reformate_ratio = volume_of_reformate_gasoline / total_volume;
+    double isomerate_ratio = volume_of_isomerate_gasoline / total_volume;
+
+    double gasoline_spg = fcc_ratio* fcc_SPG + reformate_ratio*reformatre_SPG + isomerate_ratio*isomerate_SPG;
+    double gasoline_RON = fcc_ratio* fcc_RON + reformate_ratio*reformatre_RON + isomerate_ratio*isomerate_RON;
+    double gasoline_MON = fcc_ratio* fcc_MON + reformate_ratio*reformatre_MON + isomerate_ratio*isomerate_MON;
+    double gasoline_RVP = fcc_ratio* fcc_RVP + reformate_ratio*reformatre_RVP + isomerate_ratio*isomerate_RVP;
+    double gasoline_OLEFIN = (volume_of_fcc_gasoline*fcc_Olefin + volume_of_reformate_gasoline*reformatre_Olefin + volume_of_isomerate_gasoline*isomerate_Olefin) / total_volume;
+    double gasoline_Aromathics = (volume_of_fcc_gasoline*fcc_Aromatics + volume_of_reformate_gasoline*reformatre_Aromatics + volume_of_isomerate_gasoline*isomerate_Aromatics) / total_volume;
+
+
+
+
+
+
+    if (gasoline_spg >= 0.72 && gasoline_spg < 0.775 &&
+        gasoline_RON >= 95 &&
+        gasoline_MON >= 85 &&
+        gasoline_RVP >= 50 && gasoline_RVP <= 80 &&
+        gasoline_OLEFIN <= 0.18 &&
+        gasoline_Aromathics <= 0.35
+
+            )
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+
+
+
+}
+
+bool isDieselBlended(double fcc_LCO_feed, double goht_gas_oil_feed, double hds_oil_feed) {
+
+
+
+    double volume_of_fcc_LCO_feed = fcc_LCO_feed / fcc_loco_spg;
+    double volume_of_goht_gas_oil_feed = goht_gas_oil_feed / goht_gas_oil_spg;
+    double volume_of_hds_oil_feed = hds_oil_feed / hds_gas_oil_spg;
+
+    double total_volume = volume_of_fcc_LCO_feed + volume_of_goht_gas_oil_feed + volume_of_hds_oil_feed;
+    double total_feed = fcc_LCO_feed + goht_gas_oil_feed + hds_oil_feed;
+
+    double fcc_LCO_ratio = volume_of_fcc_LCO_feed / total_volume;
+    double goht_oil_ratio = volume_of_goht_gas_oil_feed / total_volume;
+    double hds_oil_ratio = volume_of_hds_oil_feed / total_volume;
+
+    double diesel_spg = fcc_LCO_ratio* fcc_loco_spg + goht_oil_ratio*goht_gas_oil_spg + hds_oil_ratio*hds_gas_oil_spg;
+    double diesel_Aromathics = fcc_LCO_feed / total_feed * fcc_loco_polyaromathic + goht_gas_oil_feed / total_feed * goht_gas_oil_polyaromathic + hds_oil_feed / total_feed *hds_gas_oil_polyaromathic;
+
+
+
+
+
+
+    if (diesel_spg >= 0.82 && diesel_spg < 0.845 &&
+
+        diesel_Aromathics <= 0.08
+
+            )
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+
+
+}
+
+bool isBlendedAsHeatingOil(double fcc_LCO_feed, double goht_gas_oil_feed, double hds_oil_feed) {
+
+    double volume_of_fcc_LCO_feed = fcc_LCO_feed / fcc_loco_spg;
+    double volume_of_goht_gas_oil_feed = goht_gas_oil_feed / goht_gas_oil_spg;
+    double volume_of_hds_oil_feed = hds_oil_feed / hds_gas_oil_spg;
+    double diesel_spg = fcc_LCO_ratio* fcc_loco_spg + goht_oil_ratio*goht_gas_oil_spg + hds_oil_ratio*hds_gas_oil_spg;
+
+
+    double spg
+
+    if (diesel_spg > 0.85)
+        return true;
+    else
+        return false;
+
+
+}}

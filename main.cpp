@@ -21,6 +21,15 @@ long long int current_cdu_feed = 0;
 double best_splitter1=0;
 double best_splitter2=0;
 double best_splitter3=0;
+double best_splitter4=0;
+double best_splitter5=0;
+double best_splitter6=0;
+double best_splitter7=0;
+double best_splitter8=0;
+double best_splitter9=0;
+double best_splitter10=0;
+double best_splitter11=0;
+double best_splitter12=0;
 double best_fcb_ods_ratio=0;
 double best_cdu_feed=0;
 
@@ -28,6 +37,17 @@ double cdu_step = 10000000;
 double splitter1_step =0.1; //splits light naphta 1 ratio between lnht and virgin naphta
 double splitter2_step =0.1; //splits middle+heavy naphta 1 ratio between lnht and virgin naphta
 double splitter3_step = 0.1; //splits lago hago lvgo into goht ad heating oil
+double splitter4_step = 0.1;
+double splitter5_step = 0.1;
+double splitter6_step = 0.1;
+double splitter7_step = 0.1;
+double splitter8_step = 0.1;
+double splitter9_step = 0.1;
+double splitter10_step = 0.1;
+double splitter11_step = 0.1;
+double splitter12_step = 0.1;
+
+
 
 double ethylen_price = 553.20/1000;
 double propylen_price = 528.20/1000;
@@ -182,7 +202,9 @@ long int hnht_products[4]={0};
 long int isomer_products[4]={0};
 long int ccr_products[5]={0};
 long int goht_products[6]={0};
-long int hds_products[]
+long int hds_products[6]={0};
+long int bbu_products[1]={0};
+long int fcc_products[7]={0};
 
 
 double best_profit;
@@ -191,167 +213,233 @@ double best_oil_cost;
 
 
 int main() {
-    int i;
-    long long int steam=0,power=0,gas=0,water=0,hydrogen=0,catalyst=0;
-    long long int input_steam=0,input_power=0,input_gas=0,input_water=0;
-    long long int lnht_power=0,lnht_gas=0,lnht_water=0,lnht_hydrogen=0,lnht_catalyst=0;
-    long long int hnht_power=0,hnht_gas=0,hnht_water=0,hnht_hydrogen=0,hnht_catalyst=0;
-    long long int lni_power=0,lni_gas=0,lni_water=0,lni_hydrogen=0,lni_catalyst=0;
-    long long int ccr_power=0,ccr_gas=0,ccr_water=0,ccr_catalyst=0;
-    long long int goht_power=0,goht_gas=0,goht_water=0,goht_hydrogen=0,goht_catalyst=0;
-    double gas_cost=0,hydrogen_cost=0,steam_cost =0,power_cost=0,water_cost=0,total_utility_cost=0;
-    double ods_barrles =0,fcb_barrels=0,ods_cost=0,fcb_cost=0,total_crude_oil_cost=0;
-    double lpg_revenue = 0,virgin_naptha_revenue = 0,kerosene_revenue = 0,base_gasoline_revenue = 0,heating_oil_revenue=0,light_fuel_oil_revenue=0,heavy_fuel_oil_revenue=0;
-    double base_gas_oil_revenue=0,splitter1_virgin_naphta=0,splitter2_virgin_naphta=0,profit =0,expenditures=0,final_balance=0;
+    int i,fcc_tick,hds_tick;
+    long long int steam = 0, power = 0, gas = 0, water = 0, hydrogen = 0, catalyst = 0;
+    long long int input_steam = 0, input_power = 0, input_gas = 0, input_water = 0;
+    long long int lnht_power = 0, lnht_gas = 0, lnht_water = 0, lnht_hydrogen = 0, lnht_catalyst = 0;
+    long long int hnht_power = 0, hnht_gas = 0, hnht_water = 0, hnht_hydrogen = 0, hnht_catalyst = 0;
+    long long int hds_power = 0, hds_gas = 0, hds_water = 0, hds_hydrogen = 0, hds_catalyst = 0 , hds_steam =0;
+    long long int bbu_power = 0, bbu_gas = 0, bbu_water = 0, bbu_hydrogen = 0, bbu_catalyst = 0, bbu_steam=0;
+    long long int fcc_power = 0, fcc_gas = 0, fcc_water = 0, fcc_hydrogen = 0, fcc_catalyst = 0,fcc_steam=0;
+    long long int lni_power = 0, lni_gas = 0, lni_water = 0, lni_hydrogen = 0, lni_catalyst = 0;
+    long long int ccr_power = 0, ccr_gas = 0, ccr_water = 0, ccr_catalyst = 0;
+    long long int goht_power = 0, goht_gas = 0, goht_water = 0, goht_hydrogen = 0, goht_catalyst = 0;
+    double gas_cost = 0, hydrogen_cost = 0, steam_cost = 0, power_cost = 0, water_cost = 0, total_utility_cost = 0;
+    double ods_barrles = 0, fcb_barrels = 0, ods_cost = 0, fcb_cost = 0, total_crude_oil_cost = 0;
+    double lpg_revenue = 0, virgin_naptha_revenue = 0, kerosene_revenue = 0, base_gasoline_revenue = 0, heating_oil_revenue = 0, light_fuel_oil_revenue = 0, heavy_fuel_oil_revenue = 0;
+    double base_gas_oil_revenue = 0, splitter1_virgin_naphta = 0, splitter2_virgin_naphta = 0, profit = 0, expenditures = 0, final_balance = 0;
     double fuels[13];
-    double splitter1,splitter2,splitter3;
+    double splitter1, splitter2, splitter3, splitter4, splitter5, splitter6, splitter7, splitter8, splitter9, splitter10, splitter11, splitter12;
     int current_iteration1;
 
 
-    for(current_iteration1=0;current_iteration1<5;current_iteration1++) {
+    for (current_iteration1 = 0; current_iteration1 < 5; current_iteration1++) {
 
-        for(current_cdu_feed=minimal_cdu_feed;current_cdu_feed<maximal_cdu_feed;current_cdu_feed+=cdu_step)
-        {
+        for (current_cdu_feed = minimal_cdu_feed; current_cdu_feed < maximal_cdu_feed; current_cdu_feed += cdu_step) {
 
-       // std::cout << final_balance <<std::endl;
-
+            // std::cout << final_balance <<std::endl;
 
 
-            crude_distillation(&input_gas, &input_power, &input_water, &input_steam, fuels, current_iteration1,current_cdu_feed,new_array,new_array1,new_array2,new_array3,new_array4);
+
+            crude_distillation(&input_gas, &input_power, &input_water, &input_steam, fuels, current_iteration1,
+                               current_cdu_feed, new_array, new_array1, new_array2, new_array3, new_array4);
 
 
-            fcb_barrels = kilograms_to_barrels(fcb_ods_ratio[current_iteration1]/100*current_cdu_feed,api_gravity_fcb);
-            ods_barrles = kilograms_to_barrels((1-(fcb_ods_ratio[current_iteration1]/100))*current_cdu_feed,api_gravity_ods);
+            fcb_barrels = kilograms_to_barrels(fcb_ods_ratio[current_iteration1] / 100 * current_cdu_feed,
+                                               api_gravity_fcb);
+            ods_barrles = kilograms_to_barrels((1 - (fcb_ods_ratio[current_iteration1] / 100)) * current_cdu_feed,
+                                               api_gravity_ods);
 
             fcb_cost = fcb_barrels * fcb_price;
-            ods_cost = ods_barrles * (fcb_price+ods_spread);
+            ods_cost = ods_barrles * (fcb_price + ods_spread);
             total_crude_oil_cost = fcb_cost + ods_cost;
 
             kerosene_refinery = fuels[5];
-            kerosene_revenue = kerosene_refinery*kerosene_price;
+            kerosene_revenue = kerosene_refinery * kerosene_price;
 
             light_fuel_oil_refinery = fuels[9];
-            light_fuel_oil_revenue = light_fuel_oil_refinery*light_fuel_oil_price;
+            light_fuel_oil_revenue = light_fuel_oil_refinery * light_fuel_oil_price;
 
-            heavy_fuel_oil_refinery = fuels[10]+fuels[11];
-            heavy_fuel_oil_revenue = heavy_fuel_oil_refinery*heavy_fuel_oil_price;
+            heavy_fuel_oil_refinery = fuels[10] + fuels[11];
+            heavy_fuel_oil_revenue = heavy_fuel_oil_refinery * heavy_fuel_oil_price;
 
-           for(splitter1=0.0;splitter1<1.01;splitter1+=splitter1_step)
-            {
-                lnht(&lnht_gas,&lnht_power,&lnht_water,&lnht_hydrogen,&lnht_catalyst,floor(splitter1*fuels[2]),lnht_products);
-                isomer(&lni_gas,&lni_power,&lni_water,&lni_hydrogen,&lni_catalyst,lnht_products[2],isomer_products);
+            for (splitter1 = 0.0; splitter1 < 1.01; splitter1 += splitter1_step) {
+                lnht(&lnht_gas, &lnht_power, &lnht_water, &lnht_hydrogen, &lnht_catalyst, floor(splitter1 * fuels[2]),
+                     lnht_products);
+                isomer(&lni_gas, &lni_power, &lni_water, &lni_hydrogen, &lni_catalyst, lnht_products[2],
+                       isomer_products);
 
-                splitter1_virgin_naphta = (1-splitter1)*fuels[2];
+                splitter1_virgin_naphta = (1 - splitter1) * fuels[2];
                 splitter1_virgin_naphta += isomer_products[2];
 
 
+                for (splitter2 = 0.0; splitter2 < 1.01; splitter2 += splitter2_step) {
 
-                for(splitter2=0.0;splitter2<1.01;splitter2+=splitter2_step)
-                {
-
-                    hnht(&hnht_gas,&hnht_power,&hnht_water,&hnht_hydrogen,&hnht_catalyst,floor(splitter2*(fuels[3]+fuels[4])),hnht_products);
-                    ccr(&ccr_gas,&ccr_power,&ccr_water,&ccr_catalyst,floor(hnht_products[1]),ccr_products);
-
-
-
-                    base_gasoline_refinery = isomer_products[1]+ccr_products[2];
-                    base_gasoline_revenue = base_gasoline_refinery*base_gasoline_price;
-
-                    for(splitter3=0.0;splitter3<1.01;splitter3+=splitter3_step)
-                    {
-
-                        goht(&goht_gas,&goht_power,&goht_water,&goht_hydrogen,&goht_catalyst,floor(splitter3*(fuels[6]+fuels[7]+fuels[8])),goht_products);
-                        splitter2_virgin_naphta = (1-splitter2)*(fuels[3]+fuels[4]);
-                        splitter2_virgin_naphta+=goht_products[2];
-
-                        lpg_refinery = fuels[1]+lnht_products[1]+ccr_products[1]+goht_products[1];
-                        lpg_revenue = lpg_refinery * lpg_price;
-
-                        virgin_naptha_refinery = splitter1_virgin_naphta+splitter2_virgin_naphta;
-                        virgin_naptha_revenue = virgin_naptha_refinery*virgin_naptha_price;
-
-                        heating_oil_refinery = (1-splitter3)*(fuels[6]+fuels[7]+fuels[8]);
-                        heating_oil_revenue = heating_oil_refinery*heating_oil_price;
-
-                        base_gas_oil_refinery = goht_products[3];
-                        base_gas_oil_revenue = base_gas_oil_refinery*base_gas_oil_price;
-
-                        steam = input_steam;
-                        hydrogen = lnht_hydrogen + hnht_hydrogen + goht_hydrogen + lni_hydrogen;
-                        water = input_water + lnht_water + hnht_water + lni_water + ccr_water + goht_water;
-                        gas = input_gas + lnht_gas + hnht_gas + lni_gas + ccr_gas + goht_gas;
-                        power = input_power + lnht_power + hnht_power + lni_power+ccr_power + goht_power;
-                        catalyst = lnht_catalyst + ccr_catalyst + goht_catalyst + hnht_catalyst + lni_catalyst;
-
-                        if((hydrogen-ccr_products[3])>0)
-                            hydrogen_cost =  floor((hydrogen-ccr_products[3])*hydrogen_price);
-                        else
-                            hydrogen_cost = 0;
-                        if((gas-fuel_gas_power*(fuels[0]+lnht_products[0]+hnht_products[0]+isomer_products[0]+ccr_products[0]+goht_products[0]))>0)
-                            gas_cost=floor((gas-fuel_gas_power*(fuels[0]+lnht_products[0]+hnht_products[0]+isomer_products[0]+ccr_products[0]+goht_products[0]))*fuel_gas_price);
-                        else
-                            gas_cost=0;
-                        power_cost =power*electricity_price;
-                        water_cost=water*cooling_water_price;
-
-                        if(steam>0)
-                            steam_cost = steam*steam_price;
-                        else
-                            steam_cost = 0;
+                    hnht(&hnht_gas, &hnht_power, &hnht_water, &hnht_hydrogen, &hnht_catalyst,
+                         floor(splitter2 * (fuels[3] + fuels[4])), hnht_products);
+                    ccr(&ccr_gas, &ccr_power, &ccr_water, &ccr_catalyst, floor(hnht_products[1]), ccr_products);
 
 
 
-                        total_utility_cost = hydrogen_cost+steam_cost+water_cost+power_cost+catalyst+gas_cost;
+//TO DO
+
+                    for (splitter3 = 0.0; splitter3 < 1.01; splitter3 += splitter3_step) {
+                        goht(&goht_gas, &goht_power, &goht_water, &goht_hydrogen,
+                             &goht_catalyst,
+                             floor(splitter3 * (fuels[6] + fuels[7] + fuels[8])),
+                             goht_products);
+                        for (splitter4 = 0.00; splitter4 < 1.01; splitter4 += splitter4_step) {
+
+                            for (splitter5 = 0.00; splitter5 < 1.01; splitter5 += splitter5_step) {
+
+                                for (splitter6 = 0.00; splitter6 < 1.01; splitter6 += splitter6_step) {
+                                    for (splitter7 = 0.00; splitter7 < 1.01; splitter7 += splitter7_step) {
+                                        hds(&hds_gas, &hds_power, &hds_water, &hds_hydrogen,
+                                             &hds_steam,fuels[9]*splitter6,hds_products,hds_tick);
+
+                                        for (splitter8 = 0.00; splitter8 < 1.01; splitter8 += splitter8_step) {
+                                            for (splitter9 = 0.00; splitter9 < 1.01; splitter9 += splitter9_step) {
+                                                for (splitter10 = 0.00;
+                                                     splitter10 < 1.01; splitter10 += splitter10_step) {
+                                                    fcc(&fcc_gas, &fcc_power, &fcc_water, &fcc_catalyst,
+                                                        &fcc_steam,hds_products[4]*splitter10,fcc_products,fcc_tick);
+                                                    for (splitter11 = 0.00;
+                                                         splitter11 < 1.01; splitter11 += splitter11_step) {
+                                                        base_gasoline_refinery = isomer_products[1]*(1-splitter4)+ccr_products[2]*(1-splitter5)+fcc_products[3]*(1-splitter10);
+                                                        base_gasoline_revenue = base_gasoline_refinery * base_gasoline_price;
+                                                        for (splitter12 = 0.00;
+                                                             splitter12 < 1.01; splitter12 += splitter12_step) {
+                                                            bbu(&bbu_gas, &bbu_power, &bbu_water,
+                                                                &bbu_steam,splitter12*(fuels[10]+fuels[11]),bbu_products);
+
+                                                            splitter2_virgin_naphta =
+                                                                    (1 - splitter2) * (fuels[3] + fuels[4]);
+                                                            splitter2_virgin_naphta += goht_products[2];
+
+                                                            lpg_refinery =
+                                                                    fuels[1] + lnht_products[1] + ccr_products[1] +
+                                                                    goht_products[1]+hds_products[1]+fcc_products[1];
+                                                            lpg_revenue = lpg_refinery * lpg_price;
+
+                                                            virgin_naptha_refinery =
+                                                                    splitter1_virgin_naphta + splitter2_virgin_naphta+isomer_products[2]*(1-splitter4)
+                                                                    +(1-splitter5)*goht_products[2]+hds_products[2];
+                                                            virgin_naptha_revenue =
+                                                                    virgin_naptha_refinery * virgin_naptha_price;
+
+                                                            heating_oil_refinery =
+                                                                    (1 - splitter3) * (fuels[6] + fuels[7] + fuels[8])+fcc_products[4]*(1-splitter11);
+                                                            heating_oil_revenue =
+                                                                    heating_oil_refinery * heating_oil_price;
+
+                                                            base_gas_oil_refinery = goht_products[3] * (1 - splitter6);
+                                                            base_gas_oil_revenue =
+                                                                    base_gas_oil_refinery * base_gas_oil_price;
 
 
-                        profit = lpg_revenue + kerosene_revenue + virgin_naptha_revenue + light_fuel_oil_revenue + heavy_fuel_oil_revenue + heating_oil_revenue +base_gasoline_revenue + base_gas_oil_revenue;
+                                                            steam = input_steam;
+                                                            hydrogen = lnht_hydrogen + hnht_hydrogen + goht_hydrogen +
+                                                                       lni_hydrogen;
+                                                            water = input_water + lnht_water + hnht_water + lni_water +
+                                                                    ccr_water + goht_water;
+                                                            gas = input_gas + lnht_gas + hnht_gas + lni_gas + ccr_gas +
+                                                                  goht_gas;
+                                                            power = input_power + lnht_power + hnht_power + lni_power +
+                                                                    ccr_power + goht_power;
+                                                            catalyst = lnht_catalyst + ccr_catalyst + goht_catalyst +
+                                                                       hnht_catalyst + lni_catalyst;
 
-                        expenditures = total_utility_cost + total_crude_oil_cost;
+                                                            if ((hydrogen - ccr_products[3]) > 0)
+                                                                hydrogen_cost = floor(
+                                                                        (hydrogen - ccr_products[3]) * hydrogen_price);
+                                                            else
+                                                                hydrogen_cost = 0;
+                                                            if ((gas - fuel_gas_power *
+                                                                       (fuels[0] + lnht_products[0] + hnht_products[0] +
+                                                                        isomer_products[0] +
+                                                                        ccr_products[0] + goht_products[0])) > 0)
+                                                                gas_cost = floor((gas - fuel_gas_power *
+                                                                                        (fuels[0] + lnht_products[0] +
+                                                                                         hnht_products[0] +
+                                                                                         isomer_products[0] +
+                                                                                         ccr_products[0] +
+                                                                                         goht_products[0])) *
+                                                                                 fuel_gas_price);
+                                                            else
+                                                                gas_cost = 0;
+                                                            power_cost = power * electricity_price;
+                                                            water_cost = water * cooling_water_price;
 
-                        /*
-                                if (current_iteration1 ==0 && splitter1 == 0 &&splitter2 == 0.7 && splitter3>0.9 &&current_cdu_feed == 6000000000 )
-                                               {
-                                                  std::cout << std::endl << std::endl<< profit << std::endl;
-                                                   std::cout << total_utility_cost << std::endl;
-                                                   std::cout << total_crude_oil_cost << std::endl;
-                                                   std::cout << splitter3;
-                                                    std::cout << lpg_refinery<<std::endl;
-                std::cout << virgin_naptha_refinery<<std::endl;
-                 std::cout << kerosene_refinery<<std::endl;
+                                                            if (steam > 0)
+                                                                steam_cost = steam * steam_price;
+                                                            else
+                                                                steam_cost = 0;
 
+
+                                                            total_utility_cost =
+                                                                    hydrogen_cost + steam_cost + water_cost +
+                                                                    power_cost + catalyst + gas_cost;
+
+
+                                                            profit = lpg_revenue + kerosene_revenue +
+                                                                     virgin_naptha_revenue + light_fuel_oil_revenue +
+                                                                     heavy_fuel_oil_revenue + heating_oil_revenue +
+                                                                     base_gasoline_revenue +
+                                                                     base_gas_oil_revenue;
+
+                                                            expenditures = total_utility_cost + total_crude_oil_cost;
+
+                                                            /*
+                                                                    if (current_iteration1 ==0 && splitter1 == 0 &&splitter2 == 0.7 && splitter3>0.9 &&current_cdu_feed == 6000000000 )
+                                                                                   {
+                                                                                      std::cout << std::endl << std::endl<< profit << std::endl;
+                                                                                       std::cout << total_utility_cost << std::endl;
+                                                                                       std::cout << total_crude_oil_cost << std::endl;
+                                                                                       std::cout << splitter3;
+                                                                                        std::cout << lpg_refinery<<std::endl;
+                                                    std::cout << virgin_naptha_refinery<<std::endl;
+                                                     std::cout << kerosene_refinery<<std::endl;
+
+                                                            }
+                                                    */
+                                                            final_balance = profit - expenditures;
+                                                            if (final_balance > minumum_cash) {
+
+                                                                minumum_cash = floor(final_balance);
+                                                                best_splitter1 = splitter1;
+                                                                best_splitter2 = splitter2;
+                                                                best_splitter3 = splitter3;
+                                                                best_fcb_ods_ratio = current_iteration1;
+                                                                best_cdu_feed = current_cdu_feed;
+                                                                best_profit = profit;
+                                                                best_expenditures = total_utility_cost;
+                                                                best_oil_cost = total_crude_oil_cost;
+
+
+                                                            }
+
+
+                                                            hydrogen_cost = 0;
+                                                            water_cost = 0;
+                                                            power_cost = 0;
+                                                            gas_cost = 0;
+                                                            steam_cost = 0;
+                                                            hydrogen = 0;
+                                                            power = 0;
+                                                            gas = 0;
+                                                            water = 0;
+                                                            steam = 0;
+                                                            catalyst = 0;
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                */
-                        final_balance = profit  - expenditures;
-                        if( final_balance > minumum_cash)
-                        {
-
-                            minumum_cash = floor(final_balance);
-                            best_splitter1 = splitter1;
-                            best_splitter2 = splitter2;
-                            best_splitter3 = splitter3;
-                            best_fcb_ods_ratio = current_iteration1;
-                            best_cdu_feed = current_cdu_feed;
-                            best_profit = profit;
-                            best_expenditures = total_utility_cost;
-                            best_oil_cost = total_crude_oil_cost;
-
-
-                        }
-
-
-                        hydrogen_cost=0;
-                        water_cost = 0;
-                        power_cost = 0;
-                        gas_cost =0;
-                        steam_cost = 0;
-                        hydrogen =0;
-                        power =0;
-                        gas=0;
-                        water =0;
-                        steam =0;
-                        catalyst=0;
-
-
                     }
 
                 }
@@ -366,19 +454,16 @@ int main() {
     std::cout << std::endl;
 
 
-    std::cout << std::endl<< best_profit << std::endl;
+    std::cout << std::endl << best_profit << std::endl;
     std::cout << best_expenditures << std::endl;
     std::cout << best_oil_cost << std::endl << std::endl;
 
-    std::cout << best_splitter1 <<std::endl;
-    std::cout << best_splitter2 <<std::endl;
-    std::cout << best_splitter3 <<std::endl;
-    std::cout << best_fcb_ods_ratio <<std::endl;
-    std::cout << best_cdu_feed <<std::endl;
+    std::cout << best_splitter1 << std::endl;
+    std::cout << best_splitter2 << std::endl;
+    std::cout << best_splitter3 << std::endl;
+    std::cout << best_fcb_ods_ratio << std::endl;
+    std::cout << best_cdu_feed << std::endl;
     std::cout << minumum_cash << std::endl;
-
-
-
 
 
 }
